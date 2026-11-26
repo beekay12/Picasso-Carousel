@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pablo Picasso - Retrospective Exhibition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="image" href="images/old-guitarist.jpg" fetchpriority="high">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #070708;
+      color: #e6e6e8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      padding: 60px 0;
+      position: relative;
+    }
+
+    .ambient-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate3d(-50%, -50%, 0);
+      width: 750px;
+      height: 480px;
+      border-radius: 50%;
+      filter: blur(150px);
+      opacity: 0.28;
+      pointer-events: none;
+      transition: background 1.4s cubic-bezier(0.25, 1, 0.5, 1);
+      z-index: 0;
+      will-change: transform, background;
+    }
+
+    .carousel-container {
+      width: 100%;
+      max-width: 1350px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 1;
+    }
+
+    .carousel-header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding: 0 20px;
+    }
+
+    .exhibition-badge {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: #c5a059;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .carousel-header h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 54px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+      background: linear-gradient(180deg, #ffffff 0%, #b8b8bc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .carousel-header p {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 21px;
+      font-style: italic;
+      color: #8e8e93;
+    }
+
+    .segmented-control {
+      display: flex;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+
+
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 30px;
+      gap: 4px;
+      max-width: 90vw;
+      overflow-x: auto;
+    }
+
+    .segmented-btn {
+      background: transparent;
+      border: none;
+      color: #86868b;
+
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .segmented-btn:hover {
+      color: #ffffff;
+    }
+
+    .segmented-btn.active {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .carousel-viewport {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      padding: 30px 0 50px 0;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .carousel-viewport:active {
+      cursor: grabbing;
+    }
+
+    .carousel-track {
+      display: flex;
+      gap: 32px;
+      transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: transform;
+      padding: 0 calc(50% - 320px);
+      transform: translateZ(0);
+    }
+
+    .carousel-card {
+      flex: 0 0 640px;
+      height: 440px;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.65s ease, filter 0.65s ease;
+      transform: scale(0.88) translateZ(0);
+      opacity: 0.35;
+      filter: blur(3px);
+      background-color: #121214;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+
+      will-change: transform, opacity, filter;
+    }
+
+    .carousel-card.active {
+      transform: scale(1) translateZ(0);
+      opacity: 1;
+      filter: blur(0px);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(197, 160, 89, 0.2);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .card-image-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .carousel-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      transition: transform 0.8s ease;
+    }
+
+    .carousel-card.active:hover img {
+      transform: scale(1.03);
+    }
+
+    .museum-plaque {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 32px 36px;
+      background: linear-gradient(180deg, rgba(7, 7, 8, 0) 0%, rgba(7, 7, 8, 0.94) 65%, rgba(7, 7, 8, 0.98) 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .plaque-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-tag {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #c5a059;
+    }
+
+    .audio-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #d1d1d6;
+      background: rgba(255, 255, 255, 0.08);
+
+
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.25s ease;
+    }
+
+    .audio-btn:hover {
+      background: rgba(197, 160, 89, 0.2);
+      border-color: rgba(197, 160, 89, 0.4);
+      color: #ffffff;
+    }
+
+    .audio-btn.playing {
+      background: rgba(197, 160, 89, 0.3);
+      border-color: #c5a059;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(197, 160, 89, 0.3);
+    }
+
+
+    .card-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 32px;
+      font-weight: 600;
+      color: #f5f5f7;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+    }
+
+    .card-medium {
+      font-size: 13px;
+      color: #a1a1a6;
+      font-style: italic;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: #98989d;
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+
+    .controls-wrapper {
+      display: grid;
+      grid-template-columns: 1fr minmax(4.5em, auto) 1fr;
+      align-items: center;
+      justify-items: center;
+      width: min(90%, 24rem);
+      margin-top: 10px;
+    }
+
+    .nav-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(197, 160, 89, 0.4);
+      transform: scale(1.05);
+    }
+
+    .nav-btn:active {
+      transform: scale(0.95);
+    }
+
+    .nav-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(4, 4, 5, 0.92);
+      backdrop-filter: blur(35px);
+      -webkit-backdrop-filter: blur(35px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+      z-index: 1000;
+      padding: 40px 20px;
+      will-change: opacity;
+    }
+
+    .modal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: #0f0f11;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      max-width: 960px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      position: relative;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.98), 0 0 0 1px rgba(197, 160, 89, 0.15);
+      transform: scale(0.93) translateZ(0);
+      transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: transform;
+    }
+
+    .modal.open .modal-card {
+      transform: scale(1) translateZ(0);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
+
+    .modal-image-container {
+      width: 100%;
+      height: 100%;
+      min-height: 480px;
+      background: #040405;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .modal-image-container img {
+      max-width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .modal-body {
+      padding: 44px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .modal-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-tag {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #c5a059;
+    }
+
+    .modal-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 38px;
+      font-weight: 600;
+      color: #f5f5f7;
+      line-height: 1.1;
+    }
+
+    .modal-medium {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 16px;
+      font-style: italic;
+      color: #a1a1a6;
+    }
+
+    .modal-location {
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      color: #727277;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .modal-desc {
+      font-size: 14px;
+      color: #aaaaae;
+      line-height: 1.75;
+    }
+
+    @media (max-width: 900px) {
+      .modal-card {
+        grid-template-columns: 1fr;
+      }
+      .modal-image-container {
+        min-height: 300px;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .carousel-header h1 {
+        font-size: 38px;
+      }
+      .carousel-header p {
+        font-size: 17px;
+      }
+      .carousel-card {
+        flex: 0 0 85vw;
+        height: 400px;
+        border-radius: 16px;
+
+      }
+      .carousel-track {
+        padding: 0 calc(50% - 42.5vw);
+      }
+      .museum-plaque {
+        padding: 24px;
+      }
+      .card-title {
+        font-size: 24px;
+      }
+      .modal-body {
+        padding: 28px;
+      }
+      .modal-title {
+        font-size: 28px;
+      }
+    }
+      .view-action { display: flex; justify-content: center; margin-top: 1rem; }
+    #viewPainting, #guidePlayback { border: 1px solid #c5a059; background: #191510; color: #f1d294; font: inherit; cursor: pointer; }
+    #viewPainting:hover, #guidePlayback:hover { background: #30251a; }
+    #paintingCount { align-self: center; min-width: 4.5em; text-align: center; font-variant-numeric: tabular-nums; }
+    .modal-card { max-width: 1120px; grid-template-columns: 1.45fr 1fr; }
+    @media (max-width: 900px) {
+      .modal { padding: 12px; }
+      .modal-card { grid-template-columns: minmax(0, 1fr); max-height: 94dvh; }
+      .modal-image-container { min-height: 0; height: auto; padding: 14px; }
+      .modal-image-container img { max-height: 48dvh; }
+      .modal-body { padding: 20px; }
+      .modal-header-row { flex-wrap: wrap; gap: .5rem; }
+      
+    }
+      html, .segmented-control, .modal-card { scrollbar-width: none; }
+    html::-webkit-scrollbar,
+    .segmented-control::-webkit-scrollbar,
+    .modal-card::-webkit-scrollbar { display: none; }
+    .gallery-footer {
+      position: relative;
+      margin: 2.5rem auto 0;
+      width: var(--gallery-content-width);
+      border-top: 1px solid rgba(197, 160, 89, .22);
+      padding: .65rem 0 1.3rem;
+      text-align: center;
+    }
+    .gallery-footer a {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      min-height: 44px;
+      color: #b9b1a3;
+      font-size: .875rem;
+      text-decoration: none;
+    }
+    .gallery-footer a:hover, .gallery-footer a:focus-visible { color: #f1d294; }
+    .gallery-footer a:focus-visible { outline: 2px solid #c5a059; outline-offset: 4px; }
+    .gallery-footer svg { width: 1rem; height: 1rem; }
+    body:has(.modal.open) .gallery-footer { visibility: hidden; }
+      body { justify-content: flex-start; overflow-x: clip; padding: 0 0 1rem; }
+    .gallery-nav {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      width: 100%;
+      background: rgba(7, 7, 8, .95);
+      border-bottom: 1px solid rgba(197, 160, 89, .22);
+    }
+    .gallery-nav-inner {
+      width: var(--gallery-content-width);
+      margin-inline: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .75rem;
+      min-height: 3.75rem;
+    }
+    .gallery-nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      color: #d4cbc0;
+      text-decoration: none;
+    }
+    .gallery-nav a:hover, .gallery-nav a:focus-visible { color: #f1d294; }
+    .gallery-nav a:focus-visible { outline: 2px solid #c5a059; outline-offset: 2px; }
+    .gallery-nav .gallery-brand {
+      color: #f1d294;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.65rem;
+    }
+    .gallery-nav-links { display: flex; gap: clamp(.6rem, 2.5vw, 1.75rem); font-size: .875rem; }
+    .carousel-container { padding-top: clamp(2rem, 6vw, 4rem); }
+    #exhibition, #paintings, #credits { scroll-margin-top: 5rem; }
+    .paintings-heading {
+      margin: 0 0 .7rem;
+      color: #e6e6e8;
+      font: 500 1.65rem 'Cormorant Garamond', Georgia, serif;
+    }
+    @media (max-width: 360px) {
+      .gallery-nav-links { font-size: .78rem; }
+    }
+      .gallery-section, .paintings-heading {
+      width: var(--gallery-content-width);
+      border-top: 1px solid rgba(197, 160, 89, .22);
+    }
+    .gallery-section { padding-top: clamp(1.5rem, 4vw, 2.75rem); }
+    .gallery-section h2 {
+      margin: 0 0 .75rem;
+      color: #f1d294;
+      font: 500 clamp(1.9rem, 4vw, 2.6rem) 'Cormorant Garamond', Georgia, serif;
+    }
+    .artist-profile {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      gap: clamp(1.5rem, 5vw, 4rem);
+      align-items: start;
+      margin-bottom: clamp(1.75rem, 4vw, 3rem);
+    }
+    .artist-profile p { margin: 0 0 .75rem; color: #c6c3c1; line-height: 1.7; }
+    .artist-facts { margin: 0; }
+    .artist-facts div { padding: .65rem 0; border-bottom: 1px solid rgba(197, 160, 89, .16); }
+    .artist-facts dt { margin-bottom: .25rem; color: #f1d294; font-size: .8rem; }
+    .artist-facts dd { margin: 0; color: #e6e6e8; font-size: .9rem; line-height: 1.45; }
+    .paintings-heading { padding-top: 1.35rem; text-align: center; }
+    .gallery-quote { margin-top: clamp(2rem, 6vw, 4.5rem); text-align: center; }
+    .gallery-quote blockquote {
+      max-width: 27ch;
+      margin: .5rem auto 1rem;
+      font: italic 500 clamp(1.65rem, 4vw, 2.8rem)/1.2 'Cormorant Garamond', Georgia, serif;
+    }
+    .section-source { color: #b9b1a3; font-size: .85rem; }
+    .section-source a { color: #f1d294; text-underline-offset: .2em; }
+    #artist, #quote { scroll-margin-top: 5rem; }
+    @media (max-width: 650px) {
+      .artist-profile { grid-template-columns: minmax(0, 1fr); }
+      .gallery-nav-links { gap: .5rem; font-size: .78rem; }
+    }
+      :root {
+      --gallery-content-width: min(90%, 64rem);
+      --pill-radius: 999px;
+      --pill-height: 44px;
+      --pill-padding: 1rem;
+      --segment-inset: 4px;
+    }
+    .segmented-control {
+      padding: var(--segment-inset);
+      gap: var(--segment-inset);
+      border-radius: var(--pill-radius);
+    }
+    .segmented-btn, .audio-btn, #viewPainting, #guidePlayback {
+      min-height: var(--pill-height);
+      padding: .4rem var(--pill-padding);
+      border-radius: var(--pill-radius);
+      font-weight: 500;
+      line-height: 1.2;
+    }
+    .segmented-btn { flex: 0 0 auto; border: 1px solid transparent; }
+    .audio-btn { flex-shrink: 0; }
+    .plaque-header { gap: .5rem; }
+    #guidePlayback { max-width: 90vw; }
+    .segmented-btn:focus-visible, .audio-btn:focus-visible,
+    #viewPainting:focus-visible, #guidePlayback:focus-visible {
+      outline: 2px solid #f1d294;
+      outline-offset: -3px;
+    }
+    .nav-btn, .modal-close {
+      width: var(--pill-height);
+      height: var(--pill-height);
+      border-radius: 50%;
+    }
+    @media (max-width: 480px) {
+      :root { --pill-padding: .75rem; }
+    }
+      .segmented-btn { position: relative; }
+    .segmented-btn.active::after {
+      content: '';
+      position: absolute;
+      inset: auto calc(50% - 6px) 3px;
+      height: 2px;
+      background: #f1d294;
+      transform: skewX(-26deg);
+      animation: period-accent 220ms ease-out both;
+    }
+    @keyframes period-accent {
+      from { opacity: 0; transform: translateX(-5px) skewX(-26deg) scaleX(.6); }
+    }
+    .carousel-track.is-filtering { transition: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .segmented-btn, .carousel-track, .ambient-glow { transition: none; }
+      .segmented-btn.active::after { animation: none; }
+    }
+      .gallery-icon {
+      width: 1.125rem;
+      height: 1.125rem;
+      flex: none;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .nav-btn .gallery-icon { stroke-width: 1.75; }
+    #guidePlayback:not([hidden]) { display: inline-flex; align-items: center; gap: .45rem; }
+    .guide-wave path { transform-box: fill-box; transform-origin: center; }
+    @media (prefers-reduced-motion: reduce) {
+      .playing .guide-wave path { animation: none; }
+      .modal, .modal-card { transition: none; }
+    }
+      .playing .guide-wave path:nth-child(1) { transform: scaleY(var(--wave-1, .22)); }
+    .playing .guide-wave path:nth-child(2) { transform: scaleY(var(--wave-2, .22)); }
+    .playing .guide-wave path:nth-child(3) { transform: scaleY(var(--wave-3, .22)); }
+    .playing .guide-wave path:nth-child(4) { transform: scaleY(var(--wave-4, .22)); }
+    @media (prefers-reduced-motion: reduce) {
+      .playing .guide-wave path:nth-child(n) { transform: none; }
+    }
+      .gallery-nav-links a { gap: .35rem; }
+    .gallery-nav-links .gallery-icon { width: 1rem; height: 1rem; color: #c5a059; }
+    .gallery-nav-links a:hover .gallery-icon,
+    .gallery-nav-links a:focus-visible .gallery-icon { color: currentColor; }
+    @media (max-width: 420px) {
+      .gallery-nav-links a { flex-direction: column; justify-content: center; gap: .18rem; }
+      .gallery-nav-links { gap: clamp(.35rem, 2.5vw, .65rem); }
+    }
+      @media (prefers-reduced-motion: no-preference) {
+      html { scroll-behavior: smooth; }
+    }
+  
+    .carousel-viewport {
+      --edge-fade: min(7%, 4rem);
+      mask-image: linear-gradient(
+        to right,
+        transparent,
+        black var(--edge-fade),
+        black calc(100% - var(--edge-fade)),
+        transparent
+      );
+    }
+  </style>
+  <link rel="icon" href="picasso-cartoon.ico" type="image/x-icon" sizes="16x16 32x32">
+</head>
+<body>
+  <nav class="gallery-nav" aria-label="Main navigation">
+    <div class="gallery-nav-inner">
+      <a class="gallery-brand" href="#exhibition">Picasso</a>
+      <div class="gallery-nav-links">
+        <a href="#artist"><svg class="gallery-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg><span>Artist</span></a>
+        <a href="#paintings"><svg class="gallery-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="1.25"/><path d="m4 17 5-5 3 3 3-4 5 6"/></svg><span>Paintings</span></a>
+        <a href="#quote"><svg class="gallery-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 6H5l-2 6v5h7v-5H6m15-6h-5l-2 6v5h7v-5h-4"/></svg><span>Quote</span></a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="ambient-glow" id="ambientGlow"></div>
+
+  <main class="carousel-container">
+    <header class="carousel-header" id="exhibition">
+      <span class="exhibition-badge">A Life in Paint</span>
+      <h1>Pablo Picasso</h1>
+      <p>Six paintings, from the Blue Period to <em>Guernica</em></p>
+    </header>
+
+    <section class="gallery-section artist-profile" id="artist" aria-labelledby="artist-title">
+      <div>
+        <h2 id="artist-title">The painter</h2>
+        <p>Pablo Picasso grew up in Spain and began painting as a child with encouragement from his father, a drawing teacher. He studied art in A Coruña and Barcelona before making his first visit to Paris in 1900.</p>
+        <p>The paintings here span more than three decades, from the restrained blues of <em>The Old Guitarist</em> to the fractured figures of <em>Guernica</em>. Between those works, Picasso and Georges Braque developed Cubism, breaking familiar subjects into overlapping planes.</p>
+        <p class="section-source"><a href="https://www.museepicassoparis.fr/en/picasso-biography/timeline/">Picasso timeline · Musée Picasso Paris</a></p>
+      </div>
+      <dl class="artist-facts">
+        <div><dt>Born</dt><dd>25 October 1881, Málaga, Spain</dd></div>
+        <div><dt>Died</dt><dd>8 April 1973, Mougins, France</dd></div>
+        <div><dt>Movement</dt><dd>Cubism, developed with Georges Braque</dd></div>
+        <div><dt>Works on view</dt><dd>Six paintings, 1903–1937</dd></div>
+      </dl>
+    </section>
+
+    <h2 class="paintings-heading" id="paintings">Paintings</h2>
+    <div class="segmented-control" id="eraFilter">
+      <button class="segmented-btn active" aria-pressed="true" data-era="all">All Works</button>
+      <button class="segmented-btn" aria-pressed="false" data-era="blue">Blue Period</button>
+      <button class="segmented-btn" aria-pressed="false" data-era="rose">Rose Period</button>
+      <button class="segmented-btn" aria-pressed="false" data-era="cubism">Cubism</button>
+      <button class="segmented-btn" aria-pressed="false" data-era="surrealism">Surrealism</button>
+    </div>
+
+    <div class="carousel-viewport" id="carouselViewport">
+      <div class="carousel-track" id="carouselTrack">
+        
+        <div class="carousel-card" data-era="blue" data-color="#1b365d" data-location="The Art Institute of Chicago, USA" data-medium="Oil on panel • 121.3 cm × 82.5 cm" data-audio="audio/old-guitarist.mp3" data-detail="Painted following the heartbreaking suicide of Picasso's close friend Carlos Casagemas. The monochromatic blue palette and unnaturally elongated body reflect the profound sorrow, destitution, and existential isolation characteristic of his early Barcelona period.">
+          <div class="card-image-wrapper">
+            <img src="images/old-guitarist.jpg" alt="The Old Guitarist" loading="eager" decoding="async" fetchpriority="high" width="640" height="440">
+          </div>
+          <div class="museum-plaque">
+            <div class="plaque-header">
+              <span class="card-tag">Blue Period • 1903</span>
+              <button class="audio-btn" aria-label="Listen to audio guide for The Old Guitarist">
+                <svg class="gallery-icon guide-wave" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10l-1 4"/><path d="M10 5L8 19"/><path d="M15 8l-2 8"/><path d="M20 3l-2 18"/></svg>
+                <span class="audio-label">Listen Guide</span>
+              </button>
+            </div>
+            <h2 class="card-title">The Old Guitarist</h2>
+            <span class="card-medium">Oil on panel</span>
+            <p class="card-desc">Stark monochromatic indigo hues capturing melancholy and human vulnerability.</p>
+          </div>
+        </div>
+
+        <div class="carousel-card" data-era="rose" data-color="#8c472a" data-location="Private Collection, New York" data-medium="Oil on canvas • 100 cm × 81.3 cm" data-audio="audio/boy-with-pipe.mp3" data-detail="Painted shortly after Picasso settled in Montmartre, Paris. The warm terracotta hues, subtle rose pigments, and delicate floral wreath mark a decisive psychological transition toward optimism and Parisian bohemian romance.">
+          <div class="card-image-wrapper">
+            <img src="images/boy-with-pipe.jpg" alt="Boy with a Pipe" loading="lazy" decoding="async" width="640" height="440">
+          </div>
+          <div class="museum-plaque">
+            <div class="plaque-header">
+              <span class="card-tag">Rose Period • 1905</span>
+              <button class="audio-btn" aria-label="Listen to audio guide for Boy with a Pipe">
+                <svg class="gallery-icon guide-wave" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10l-1 4"/><path d="M10 5L8 19"/><path d="M15 8l-2 8"/><path d="M20 3l-2 18"/></svg>
+                <span class="audio-label">Listen Guide</span>
+              </button>
+            </div>
+            <h2 class="card-title">Boy with a Pipe</h2>
+            <span class="card-medium">Oil on canvas</span>
+            <p class="card-desc">Warm terracotta tones capturing youthful contemplation in Montmartre.</p>
+          </div>
+        </div>
+
+        <div class="carousel-card" data-era="cubism" data-color="#73532c" data-location="Museum of Modern Art, New York" data-medium="Oil on canvas • 243.9 cm × 233.7 cm" data-audio="audio/les-demoiselles.mp3" data-detail="A watershed moment in modern Western art. Synthesizing Iberian sculpture with traditional African tribal masks, Picasso shattered five centuries of Renaissance visual perspective to lay the foundations of Cubism.">
+          <div class="card-image-wrapper">
+            <img src="images/les-demoiselles.jpg" alt="Les Demoiselles d'Avignon" loading="lazy" decoding="async" width="640" height="440">
+          </div>
+          <div class="museum-plaque">
+            <div class="plaque-header">
+              <span class="card-tag">Proto-Cubism • 1907</span>
+              <button class="audio-btn" aria-label="Listen to audio guide for Les Demoiselles d'Avignon">
+                <svg class="gallery-icon guide-wave" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10l-1 4"/><path d="M10 5L8 19"/><path d="M15 8l-2 8"/><path d="M20 3l-2 18"/></svg>
+                <span class="audio-label">Listen Guide</span>
+              </button>
+            </div>
+            <h2 class="card-title">Les Demoiselles d'Avignon</h2>
+            <span class="card-medium">Oil on canvas</span>
+            <p class="card-desc">The monumental compositional rupture that dismantled perspective.</p>
+          </div>
+        </div>
+
+        <div class="carousel-card" data-era="cubism" data-color="#862d70" data-location="Museum of Modern Art, New York" data-medium="Oil on canvas • 162.3 cm × 130.2 cm" data-audio="audio/girl-before-mirror.mp3" data-detail="Depicting Marie-Thérèse Walter, this piece explores the psychological duality between physical radiant illumination and the darker, introspective self rendered within a stained-glass geometric grid.">
+          <div class="card-image-wrapper">
+            <img src="images/girlbeforemirror.jpg" alt="Girl before a Mirror" loading="lazy" decoding="async" width="640" height="440">
+          </div>
+          <div class="museum-plaque">
+            <div class="plaque-header">
+              <span class="card-tag">Cubism • 1932</span>
+              <button class="audio-btn" aria-label="Listen to audio guide for Girl before a Mirror">
+                <svg class="gallery-icon guide-wave" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10l-1 4"/><path d="M10 5L8 19"/><path d="M15 8l-2 8"/><path d="M20 3l-2 18"/></svg>
+                <span class="audio-label">Listen Guide</span>
+              </button>
+            </div>
+            <h2 class="card-title">Girl before a Mirror</h2>
+            <span class="card-medium">Oil on canvas</span>
+            <p class="card-desc">Intense rhythmic geometry depicting beauty and mortality.</p>
+          </div>
+        </div>
+
+        <div class="carousel-card" data-era="surrealism" data-color="#3d4652" data-location="Museo Reina Sofía, Madrid" data-medium="Oil on canvas • 349.3 cm × 776.6 cm" data-audio="audio/guernica.mp3" data-detail="Commissioned for the Spanish Pavilion at the 1937 Paris International Exposition. Created in response to the aerial bombing of Guernica, this mural remains history's most renowned anti-war statement.">
+          <div class="card-image-wrapper">
+            <img src="images/guernica.jpg" alt="Guernica" loading="lazy" decoding="async" width="640" height="440">
+          </div>
+          <div class="museum-plaque">
+            <div class="plaque-header">
+              <span class="card-tag">Surrealism • 1937</span>
+              <button class="audio-btn" aria-label="Listen to audio guide for Guernica">
+                <svg class="gallery-icon guide-wave" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10l-1 4"/><path d="M10 5L8 19"/><path d="M15 8l-2 8"/><path d="M20 3l-2 18"/></svg>
+                <span class="audio-label">Listen Guide</span>
+              </button>
+            </div>
+            <h2 class="card-title">Guernica</h2>
+            <span class="card-medium">Oil on canvas</span>
+            <p class="card-desc">A tragic monochromatic monument capturing human suffering.</p>
+          </div>
+        </div>
+
+        <div class="carousel-card" data-era="cubism" data-color="#1c5633" data-location="Tate Modern, London" data-medium="Oil on canvas • 60 cm × 49 cm" data-audio="audio/weeping-woman.mp3" data-detail="Created in direct emotional response to the tragedy of Guernica, this portrait captures universal grief through fractured facial planes, tearful eyes, and acidic color contrasts.">
+          <div class="card-image-wrapper">
+            <img src="images/weeping-woman.jpg" alt="The Weeping Woman" loading="lazy" decoding="async" width="640" height="440">
+          </div>
+          <div class="museum-plaque">
+            <div class="plaque-header">
+              <span class="card-tag">Late Cubism • 1937</span>
+              <button class="audio-btn" aria-label="Listen to audio guide for The Weeping Woman">
+                <svg class="gallery-icon guide-wave" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10l-1 4"/><path d="M10 5L8 19"/><path d="M15 8l-2 8"/><path d="M20 3l-2 18"/></svg>
+                <span class="audio-label">Listen Guide</span>
+              </button>
+            </div>
+            <h2 class="card-title">The Weeping Woman</h2>
+            <span class="card-medium">Oil on canvas</span>
+            <p class="card-desc">Angular, fractured portraiture capturing grief through acidic contrast.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="view-action"><button type="button" id="viewPainting" aria-haspopup="dialog">View painting</button></div>
+    <div class="view-action"><button type="button" id="guidePlayback" hidden><svg class="gallery-icon guide-wave" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10l-1 4"/><path d="M10 5L8 19"/><path d="M15 8l-2 8"/><path d="M20 3l-2 18"/></svg><span></span></button></div>
+    <div class="controls-wrapper">
+      <button class="nav-btn" id="prevBtn" aria-label="Previous artwork">
+        <svg class="gallery-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+
+      <span id="paintingCount" role="status">1 of 6</span>
+      <button class="nav-btn" id="nextBtn" aria-label="Next artwork">
+        <svg class="gallery-icon" viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+    <section class="gallery-section gallery-quote" id="quote" aria-labelledby="quote-title">
+      <h2 id="quote-title">In his words</h2>
+      <blockquote cite="https://www.moma.org/documents/moma_catalogue_2843_300061942.pdf">
+        <p>“Art is a lie that makes us realize truth, at least the truth that is given us to understand.”</p>
+      </blockquote>
+      <p class="section-source">Pablo Picasso, <a href="https://www.moma.org/documents/moma_catalogue_2843_300061942.pdf">statement to Marius de Zayas, 1923</a></p>
+    </section>
+  </main>
+
+  <div class="modal" id="artModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" inert>
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose" aria-label="Close archive view">
+        <svg class="gallery-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+      </button>
+      <div class="modal-image-container">
+        <img id="modalImg" alt="" decoding="async">
+      </div>
+      <div class="modal-body">
+        <div class="modal-header-row">
+          <span class="modal-tag" id="modalTag"></span>
+          <button class="audio-btn" id="modalAudioBtn" aria-label="Listen to narration">
+            <svg class="gallery-icon guide-wave" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10l-1 4"/><path d="M10 5L8 19"/><path d="M15 8l-2 8"/><path d="M20 3l-2 18"/></svg>
+            <span class="audio-label">Play Audio</span>
+          </button>
+        </div>
+        <h3 class="modal-title" id="modalTitle"></h3>
+        <span class="modal-medium" id="modalMedium"></span>
+        <span class="modal-location" id="modalLocation"></span>
+        <p class="modal-desc" id="modalDesc"></p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="gallery-footer" id="credits">
+    <a href="https://github.com/beekay12" aria-label="beekay12 on GitHub">
+      <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      <span>beekay12 on GitHub</span>
+    </a>
+  </footer>
+
+  <script>
+    const track = document.getElementById('carouselTrack');
+    const viewport = document.getElementById('carouselViewport');
+    const allCards = Array.from(track.children);
+    const prevBtn = document.getElementById('prevBtn');
+    const paintingCount = document.getElementById('paintingCount');
+    const viewPainting = document.getElementById('viewPainting');
+    const nextBtn = document.getElementById('nextBtn');
+    const eraFilter = document.getElementById('eraFilter');
+    const ambientGlow = document.getElementById('ambientGlow');
+    const artModal = document.getElementById('artModal');
+    const modalClose = document.getElementById('modalClose');
+    const modalImg = document.getElementById('modalImg');
+    const modalTag = document.getElementById('modalTag');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMedium = document.getElementById('modalMedium');
+    const modalLocation = document.getElementById('modalLocation');
+    const modalDesc = document.getElementById('modalDesc');
+    const modalAudioBtn = document.getElementById('modalAudioBtn');
+
+    let visibleCards = [...allCards];
+    let currentIndex = 0;
+    let startX = 0;
+    let isDragging = false;
+    let dragTicking = false;
+    let currentDragX = 0;
+    const dragThreshold = 40;
+
+    let currentAudio = null;
+    let pausedGuideTime = null;
+    let currentGuideSrc = '';
+    let currentModalAudioSrc = '';
+    const guidePlayback = document.getElementById('guidePlayback');
+    const guides = new Map(allCards.map(card => [card.dataset.audio, {
+      title: card.querySelector('.card-title').textContent,
+      button: card.querySelector('.audio-btn')
+    }]));
+
+    const waveformMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    const waveformData = new Map();
+    let waveformFrame = 0;
+    let waveformLevels = [0, 0, 0, 0];
+
+    function loadWaveform(src) {
+      if (waveformData.has(src)) return;
+      waveformData.set(src, null);
+      const script = document.createElement('script');
+      script.src = src.replace(/\.mp3$/, '.wave.js');
+      script.onload = () => {
+        const encoded = script.dataset.levels;
+        script.remove();
+        if (!encoded) return;
+        const levels = Uint8Array.from(atob(encoded), letter => letter.charCodeAt(0));
+        waveformData.set(src, { levels, rate: 30 });
+      };
+      script.onerror = () => script.remove();
+      document.head.append(script);
+    }
+
+    function drawWaveform() {
+      waveformFrame = 0;
+      if (waveformMotion.matches || !currentAudio || currentAudio.paused || currentAudio.ended) return;
+      const data = waveformData.get(currentGuideSrc);
+      if (data) {
+        const position = currentAudio.currentTime * data.rate;
+        const index = Math.floor(position);
+        const first = data.levels[index] ?? 0;
+        const second = data.levels[index + 1] ?? first;
+        const volume = (first + (second - first) * (position - index)) / 255;
+        const gains = [0.72, 1, 0.84, 0.94];
+        for (let i = 0; i < gains.length; i++) {
+          const target = 0.22 + volume * gains[i] * 0.78;
+          waveformLevels[i] += (target - waveformLevels[i]) * 0.3;
+          document.documentElement.style.setProperty('--wave-' + (i + 1), waveformLevels[i]);
+        }
+      }
+      waveformFrame = requestAnimationFrame(drawWaveform);
+    }
+
+    function syncWaveform(playing) {
+      if (playing && !waveformMotion.matches) {
+        loadWaveform(currentGuideSrc);
+        if (!waveformFrame) waveformFrame = requestAnimationFrame(drawWaveform);
+      } else if (waveformFrame) {
+        cancelAnimationFrame(waveformFrame);
+        waveformFrame = 0;
+        waveformLevels = [0, 0, 0, 0];
+        for (let i = 1; i <= 4; i++) document.documentElement.style.removeProperty('--wave-' + i);
+      }
+    }
+
+    waveformMotion.addEventListener('change', updateGuideControls);
+
+    function updateGuideControls() {
+      const playing = Boolean(currentAudio && !currentAudio.paused && !currentAudio.ended);
+      for (const [src, guide] of guides) {
+        updateGuideButton(guide.button, src, guide.title, 'Listen Guide', playing);
+      }
+      const modalGuide = guides.get(currentModalAudioSrc);
+      updateGuideButton(modalAudioBtn, currentModalAudioSrc, modalGuide?.title, 'Play Audio', playing);
+      syncWaveform(playing);
+      guidePlayback.hidden = !currentAudio;
+      if (currentAudio) {
+        const action = playing ? 'Pause Guide' : 'Resume Guide';
+        guidePlayback.classList.toggle('playing', playing);
+        guidePlayback.querySelector('span').textContent = action + ' · ' + guides.get(currentGuideSrc).title;
+      }
+    }
+
+    function updateGuideButton(button, src, title, idleLabel, playing) {
+      const isCurrentGuide = currentAudio !== null && src === currentGuideSrc;
+      const active = isCurrentGuide && playing;
+      const label = isCurrentGuide ? (active ? 'Pause Guide' : 'Resume Guide') : idleLabel;
+      button.classList.toggle('playing', active);
+      button.querySelector('.audio-label').textContent = label;
+      button.setAttribute('aria-label', title ? label + ' for ' + title : label);
+    }
+
+    function toggleAudio(src) {
+      if (!guides.has(src)) return;
+      if (currentAudio && src === currentGuideSrc && !currentAudio.paused) {
+        pausedGuideTime = currentAudio.currentTime;
+        currentAudio.pause();
+        updateGuideControls();
+        return;
+      }
+
+      if (src !== currentGuideSrc) {
+        pausedGuideTime = null;
+        currentAudio?.pause();
+        currentAudio = new Audio(src);
+        currentGuideSrc = src;
+        const audio = currentAudio;
+        audio.addEventListener('ended', () => {
+          if (currentAudio !== audio) return;
+          currentAudio = null;
+          pausedGuideTime = null;
+          currentGuideSrc = '';
+          updateGuideControls();
+        });
+      }
+
+      const audio = currentAudio;
+      if (pausedGuideTime !== null && Math.abs(audio.currentTime - pausedGuideTime) > 0.05) {
+        audio.currentTime = pausedGuideTime;
+      }
+      audio.play().then(() => {
+        if (currentAudio === audio && !audio.paused) pausedGuideTime = null;
+      }).catch(() => {
+        if (currentAudio === audio) updateGuideControls();
+      });
+      updateGuideControls();
+    }
+
+    guidePlayback.addEventListener('click', () => toggleAudio(currentGuideSrc));
+    function updateCarousel() {
+      paintingCount.textContent = visibleCards.length ? (currentIndex + 1) + " of " + visibleCards.length : "0 of 0";
+      viewPainting.disabled = visibleCards.length === 0;
+      if (visibleCards.length === 0) return;
+
+
+      const cardWidth = visibleCards[0].offsetWidth;
+      const gap = 32;
+      const offset = -currentIndex * (cardWidth + gap);
+
+      track.style.transform = `translateX(${offset}px)`;
+
+      allCards.forEach(card => card.classList.remove('active'));
+
+      visibleCards.forEach((card, index) => {
+        if (index === currentIndex) {
+          card.classList.add('active');
+          const glowColor = card.getAttribute('data-color') || '#c5a059';
+          ambientGlow.style.background = `radial-gradient(circle, ${glowColor} 0%, transparent 70%)`;
+        }
+      });
+    }
+
+    function goToSlide(index) {
+      if (visibleCards.length === 0) return;
+      currentIndex = index;
+      if (currentIndex < 0) currentIndex = visibleCards.length - 1;
+      if (currentIndex >= visibleCards.length) currentIndex = 0;
+      updateCarousel();
+    }
+
+    function nextSlide() {
+      goToSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+      goToSlide(currentIndex - 1);
+    }
+
+    prevBtn.addEventListener('click', prevSlide);
+    nextBtn.addEventListener('click', nextSlide);
+
+    let periodTransition;
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+    eraFilter.addEventListener('click', (e) => {
+      const btn = e.target.closest('.segmented-btn');
+      if (!btn) return;
+
+      Array.from(eraFilter.children).forEach(filter => {
+        filter.classList.toggle('active', filter === btn);
+        filter.setAttribute('aria-pressed', String(filter === btn));
+      });
+
+
+      const selectedEra = btn.getAttribute('data-era');
+
+      if (selectedEra === 'all') {
+        visibleCards = [...allCards];
+        allCards.forEach(card => card.style.display = 'flex');
+      } else {
+        visibleCards = allCards.filter(card => {
+          const match = card.getAttribute('data-era') === selectedEra;
+          card.style.display = match ? 'flex' : 'none';
+          return match;
+        });
+      }
+
+      currentIndex = 0;
+      track.classList.add('is-filtering');
+      updateCarousel();
+      // Apply the reset before restoring the carousel's slide transition.
+      track.getBoundingClientRect();
+      track.classList.remove('is-filtering');
+
+      periodTransition?.cancel();
+      if (!reduceMotion.matches && viewport.animate) {
+        periodTransition = viewport.animate(
+          [{ opacity: 0.5, translate: '0 6px' }, { opacity: 1, translate: '0 0' }],
+          { duration: 240, easing: 'cubic-bezier(.2,.7,.2,1)' }
+        );
+      }
+    });
+
+    allCards.forEach((card) => {
+      const audioBtn = card.querySelector('.audio-btn');
+      
+      audioBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const audioSrc = card.getAttribute('data-audio');
+        toggleAudio(audioSrc);
+      });
+
+      card.addEventListener('click', () => {
+        const visibleIndex = visibleCards.indexOf(card);
+        if (visibleIndex === currentIndex) {
+          openModal(card);
+        } else if (visibleIndex !== -1) {
+          goToSlide(visibleIndex);
+        }
+      });
+    });
+
+    let lastFocused = null;
+    const gallery = document.querySelector('.carousel-container');
+    const galleryNav = document.querySelector('.gallery-nav');
+    viewPainting.addEventListener('click', () => openModal(visibleCards[currentIndex]));
+
+    function openModal(card) {
+      if (!card) return;
+      lastFocused = document.activeElement;
+      const img = card.querySelector('img');
+      const tag = card.querySelector('.card-tag').textContent;
+      const title = card.querySelector('.card-title').textContent;
+      const medium = card.getAttribute('data-medium');
+      const location = card.getAttribute('data-location');
+      const detail = card.getAttribute('data-detail');
+      currentModalAudioSrc = card.getAttribute('data-audio');
+      updateGuideControls();
+
+      modalImg.alt = img.alt;
+      modalImg.src = img.currentSrc || img.src;
+      artModal.querySelector('.modal-card').scrollTop = 0;
+      modalTag.textContent = tag;
+      modalTitle.textContent = title;
+      modalMedium.textContent = medium;
+      modalLocation.textContent = location;
+      modalDesc.textContent = detail;
+
+      artModal.inert = false;
+      gallery.inert = true; galleryNav.inert = true;
+      artModal.classList.add('open');
+      modalClose.focus({ preventScroll: true });
+    }
+
+    modalAudioBtn.addEventListener('click', () => {
+      toggleAudio(currentModalAudioSrc);
+    });
+
+    function closeModal() {
+      if (!artModal.classList.contains('open')) return;
+      artModal.classList.remove('open');
+      artModal.inert = true;
+      gallery.inert = false; galleryNav.inert = false;
+      (lastFocused && gallery.contains(lastFocused) ? lastFocused : viewPainting).focus({ preventScroll: true });
+    }
+
+    modalClose.addEventListener('click', closeModal);
+    artModal.addEventListener('click', (e) => {
+      if (e.target === artModal) closeModal();
+    });
+
+    function updateDragPosition() {
+      if (!isDragging || visibleCards.length === 0) return;
+      const diff = currentDragX - startX;
+      const cardWidth = visibleCards[0].offsetWidth;
+      const gap = 32;
+      const baseOffset = -currentIndex * (cardWidth + gap);
+      track.style.transform = `translateX(${baseOffset + diff}px)`;
+      dragTicking = false;
+    }
+
+    viewport.addEventListener('mousedown', (e) => {
+      if (e.target.closest('.audio-btn')) return;
+      isDragging = true;
+      startX = e.clientX;
+      track.style.transition = 'none';
+    });
+
+    viewport.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      currentDragX = e.clientX;
+      if (!dragTicking) {
+        requestAnimationFrame(updateDragPosition);
+        dragTicking = true;
+      }
+    });
+
+    const handleDragEnd = (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      dragTicking = false;
+      track.style.transition = 'transform 0.65s cubic-bezier(0.25, 1, 0.5, 1)';
+      const endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+      const diff = endX - startX;
+
+      if (diff < -dragThreshold) {
+        nextSlide();
+      } else if (diff > dragThreshold) {
+        prevSlide();
+      } else {
+        updateCarousel();
+      }
+    };
+
+    viewport.addEventListener('mouseup', handleDragEnd);
+    viewport.addEventListener('mouseleave', handleDragEnd);
+
+    viewport.addEventListener('touchstart', (e) => {
+      if (e.target.closest('.audio-btn')) return;
+      isDragging = true;
+      startX = e.touches[0].clientX;
+      track.style.transition = 'none';
+    }, { passive: true });
+
+    viewport.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      currentDragX = e.touches[0].clientX;
+      if (!dragTicking) {
+        requestAnimationFrame(updateDragPosition);
+        dragTicking = true;
+      }
+    }, { passive: true });
+
+    viewport.addEventListener('touchend', handleDragEnd);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && artModal.classList.contains('open')) closeModal();
+      if (e.key === 'ArrowRight' && !artModal.classList.contains('open')) nextSlide();
+      if (e.key === 'ArrowLeft' && !artModal.classList.contains('open')) prevSlide();
+    });
+
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(updateCarousel, 100);
+    });
+
+    updateCarousel();
+  </script>
+  <script>
+    (() => {
+      const quotes = [
+  [
+    "Art is a lie that makes us realize truth, at least the truth that is given us to understand.",
+    "Statement to Marius de Zayas, 1923 · MoMA",
+    "https://www.moma.org/momaorg/shared/pdfs/docs/press_archives/555/releases/MOMA_1939_0086_1939-11-11_391111-78.pdf"
+  ],
+  [
+    "In every child there is an artist. The problem is to know how to remain an artist when growing up.",
+    "Picasso’s Childhood · Musée Picasso Paris",
+    "https://www.museepicassoparis.fr/en/picasso-biography/picasso-childhood/"
+  ],
+  [
+    "For me, each painting is a study.",
+    "Picasso’s Training · Musée Picasso Paris",
+    "https://www.museepicassoparis.fr/en/picasso-biography/picasso-training/"
+  ],
+  [
+    "What will the paint do when I’m gone?",
+    "Picasso’s Final Years · Musée Picasso Paris",
+    "https://www.museepicassoparis.fr/en/picasso-biography/final-years/"
+  ],
+  [
+    "Nowadays, one no longer goes to the asylum, one founds cubism.",
+    "Cubism · Musée Picasso Paris",
+    "https://www.museepicassoparis.fr/en/picasso-biography/picasso-cubism/"
+  ],
+  [
+    "But see these surrealists! How clever they are! They found that these drawings answered exactly to their abstract ideas.",
+    "Picasso and Surrealism · Musée Picasso Paris",
+    "https://www.museepicassoparis.fr/en/picasso-biography/surrealism/"
+  ],
+  [
+    "Painting is not meant to decorate apartments. It is an instrument of offensive and defensive warfare against the enemy.",
+    "Spanish War and Occupation · Musée Picasso Paris",
+    "https://www.museepicassoparis.fr/en/picasso-biography/spanish-war-and-occupation/"
+  ],
+  [
+    "Everything that can be imagined is real.",
+    "Les Ballets Russes · Musée Picasso Paris",
+    "https://www.museepicassoparis.fr/en/picasso-biography/les-ballets-russes/"
+  ],
+  [
+    "The work you make is a way of keeping a diary.",
+    "Interview with Tériade, 1932 · Translated from French",
+    "https://www.museepicassoparis.fr/sites/default/files/2020-01/DossierPedagogique_Picasso1932_portrait_web.pdf"
+  ],
+  [
+    "I paint objects as I think them, not as I see them.",
+    "Picasso exhibition catalogue · MoMA",
+    "https://assets.moma.org/documents/moma_master-checklist_326412.pdf"
+  ],
+  [
+    "To me there is no past or future in art.",
+    "Statement by Picasso, 1923 · MoMA",
+    "https://www.moma.org/documents/moma_catalogue_2845_300204193.pdf"
+  ],
+  [
+    "Art does not evolve by itself.",
+    "Excerpt from Picasso’s 1923 statement · MoMA",
+    "https://www.moma.org/documents/moma_catalogue_2845_300204193.pdf"
+  ],
+  [
+    "I do not seek, I find.",
+    "Quoted by Mário Pedrosa · MoMA",
+    "https://www.moma.org/momaorg/shared/pdfs/docs/publication_pdf/3232/Pedrosa_PREVIEW.pdf"
+  ],
+  [
+    "This bull is a bull and this horse is a horse.",
+    "On Guernica · Reina Sofía, translated from Spanish",
+    "https://www.museoreinasofia.es/radio/guernica-terror/"
+  ]
+];
+      const key = 'picasso-last-quote';
+      let previous = -1;
+      try {
+        const saved = localStorage.getItem(key);
+        if (saved !== null) previous = Number(saved);
+      } catch {
+        // Random selection also works when local storage is unavailable.
+      }
+
+      const hasPrevious = Number.isInteger(previous) && previous >= 0 && previous < quotes.length;
+      let index = Math.floor(Math.random() * (quotes.length - Number(hasPrevious)));
+      if (hasPrevious && index >= previous) index++;
+      const [text, source, url] = quotes[index];
+      const quote = document.querySelector('#quote blockquote');
+      const link = document.querySelector('#quote .section-source a');
+      quote.querySelector('p').textContent = '“' + text + '”';
+      quote.cite = url;
+      link.textContent = source;
+      link.href = url;
+      try { localStorage.setItem(key, String(index)); } catch {}
+    })();
+
+  </script>
+</body>
+</html>
