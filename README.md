@@ -1,6 +1,6 @@
 # 🎨 Pablo Picasso — A Life in Paint
 
-An interactive gallery of six Picasso paintings, from the Blue Period to *Guernica* and *The Weeping Woman*. Browse the works, open a painting for a closer look, and listen to its audio guide.
+An interactive gallery of six Picasso paintings, from the Blue Period to *Guernica* and *The Weeping Woman*. A full-width black-and-white portrait opens the exhibition and fades to black at a thin gold divider. Browse the works, open a painting for a closer look, and listen to its audio guide.
 
 ## 🖼️ Explore the gallery
 
@@ -17,7 +17,8 @@ Download or clone the repository, keep the files together, and open `index.html`
 ## 📁 Project structure
 
 - `index.html` contains the gallery markup, styles, and interactions.
-- `images/` contains the six paintings.
+- `images/artworks/` contains the six paintings.
+- `images/artist/picasso-portrait.avif` is the hero portrait. The page applies the grayscale treatment and fade in CSS.
 - `audio/` contains the MP3 guides and precomputed waveform data.
 - `picasso-cartoon.ico` is the pixel-art tab icon.
 
